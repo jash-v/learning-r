@@ -1,0 +1,75 @@
+---
+title: "Salinity_Data"
+author: "Jackie"
+date: "6/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### Makin a plot: Salinity vs Date
+
+## 1. Download data
+Downloaded to Chapter 2 folder
+
+## 2. Create new RMD file
+Done!
+
+## 3. Read data into R
+```{r}
+data <- read.csv("DataSalinity_SFbar_FortPoint.csv")
+
+summary(data)
+```
+
+## 4. Make sure dates are recognized as dates
+```{r}
+library(chron)
+
+#as.chron(data$Data)
+data$Date = as.chron(data$Date) #overwrites the original data
+
+summary(data) #now sees as a number instead of a character like what was shown previously
+```
+
+## 5. Plot date vs salinity
+```{r}
+plot(x = data$Date, y = data$Salinity, col = "lightblue")
+```
+
+## 6. Add line for Oct. 24th 2021
+```{r}
+plot(x = data$Date, y = data$Salinity, col = "lightblue")
+abline(v = as.chron("10/24/2021")) #creates a vertical line on top of this date
+
+```
+```{r}
+library(ggplot2)
+
+myplot <- ggplot(data, aes(Date, Salinity)) #same plot as the previous one but this looks more aesthetic or prettier
+myplot + geom_point(col = "purple")+ #looks good! but x-axis labels are not shown as dates so this needs to be changed; 
+  scale_x_chron()+ #plus sign connects the lines in ggplot
+  geom_vline(xintercept = as.chron("10/24/2021"), linetype = 2, color = "blue", size = 1) # this code adds a vertical line on the plot
+
+```
+
+## ggplot face_wrap
+```{r}
+#let's try to create a different plot with both locations -> SF Bar & Fort Point
+
+myplot <- ggplot(data, aes(Date, WaterTemp))
+myplot + geom_point(col = "purple")+
+  scale_x_chron()+
+  geom_vline(xintercept = as.chron("10/24/2021"), linetype = 2, color = "blue", size = 1)+
+  facet_wrap(~Location)
+```
+
+## ggplot color for location
+```{r}
+myplot <- ggplot(data, aes(Date, WaterTemp))
+myplot + geom_point(aes(color = Location), alpha = 0.1)+ #change red to Location; alpha makes the point a bit translucent which helps when there are multiple points
+  scale_x_chron()+
+  geom_vline(xintercept = as.chron("10/24/2021"), linetype = 2, color = "blue", size = 1)
+  
+```
